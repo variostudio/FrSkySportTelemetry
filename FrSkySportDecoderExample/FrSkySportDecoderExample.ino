@@ -1,10 +1,14 @@
 /*
   FrSky S-Port Telemetry Decoder library example
-  (c) Pawelsky 20151018
+  (c) Pawelsky 20160919
   Not for commercial use
   
-  Note that you need Teensy 3.x or 328P based (e.g. Pro Mini, Nano, Uno) board and FrSkySportDecoder library for this example to work
+  Note that you need Teensy 3.x/LC or 328P based (e.g. Pro Mini, Nano, Uno) board and FrSkySportDecoder library for this example to work
 */
+
+// Uncomment the #define below to enable internal polling of data.
+// Use only when there is no device in the S.Port chain (e.g. S.Port capable FrSky receiver) that normally polls the data.
+//#define POLLING_ENABLED
 
 #include "FrSkySportSensor.h"
 #include "FrSkySportSensorAss.h"
@@ -16,19 +20,23 @@
 #include "FrSkySportSensorVario.h"
 #include "FrSkySportSingleWireSerial.h"
 #include "FrSkySportDecoder.h"
-#if !defined(__MK20DX128__) && !defined(__MK20DX256__)
+#if !defined(__MK20DX128__) && !defined(__MK20DX256__) && !defined(__MKL26Z64__) && !defined(__MK66FX1M0__) && !defined(__MK64FX512__)
 #include "SoftwareSerial.h"
 #endif
 
 FrSkySportSensorAss ass;                               // Create ASS sensor with default ID
-FrSkySportSensorFcs fcs;                               // Create FCS sensor with default ID
+FrSkySportSensorFcs fcs;                               // Create FCS-40A sensor with default ID (use ID8 for FCS-150A)
 FrSkySportSensorFlvss flvss1;                          // Create FLVSS sensor with default ID
 FrSkySportSensorFlvss flvss2(FrSkySportSensor::ID15);  // Create FLVSS sensor with given ID
 FrSkySportSensorGps gps;                               // Create GPS sensor with default ID
 FrSkySportSensorRpm rpm;                               // Create RPM sensor with default ID
 FrSkySportSensorSp2uart sp2uart;                       // Create SP2UART Type B sensor with default ID
 FrSkySportSensorVario vario;                           // Create Variometer sensor with default ID
-FrSkySportDecoder decoder;                             // Create decoder object
+#ifdef POLLING_ENABLED
+  FrSkySportDecoder decoder(true);                     // Create decoder object with polling
+#else
+  FrSkySportDecoder decoder;                           // Create decoder object without polling
+#endif
 
 uint32_t currentTime, displayTime;
 uint16_t decodeResult;
@@ -36,7 +44,7 @@ uint16_t decodeResult;
 void setup()
 {
   // Configure the decoder serial port and sensors (remember to use & to specify a pointer to sensor)
-#if defined(__MK20DX128__) || defined(__MK20DX256__)
+#if defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MKL26Z64__) || defined(__MK66FX1M0__) || defined(__MK64FX512__)
   decoder.begin(FrSkySportSingleWireSerial::SERIAL_3, &ass, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario);
 #else
   decoder.begin(FrSkySportSingleWireSerial::SOFT_SERIAL_PIN_12, &ass, &fcs, &flvss1, &flvss2, &gps, &rpm, &sp2uart, &vario);

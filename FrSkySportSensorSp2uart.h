@@ -1,6 +1,6 @@
 /*
-  FrSky S.Port to UART Remote (Type B) converter class for Teensy 3.x and 328P based boards (e.g. Pro Mini, Nano, Uno)
-  (c) Pawelsky 20151018
+  FrSky S.Port to UART Remote (Type B) converter class for Teensy 3.x/LC and 328P based boards (e.g. Pro Mini, Nano, Uno)
+  (c) Pawelsky 20160919
   Not for commercial use
   
   Note that only analog ports ADC3 and ADC4 are implemented, not the UART part.

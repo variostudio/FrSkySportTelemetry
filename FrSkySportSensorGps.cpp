@@ -1,6 +1,6 @@
 /*
-  FrSky GPS sensor class for Teensy 3.x and 328P based boards (e.g. Pro Mini, Nano, Uno)
-  (c) Pawelsky 20151018
+  FrSky GPS sensor class for Teensy 3.x/LC and 328P based boards (e.g. Pro Mini, Nano, Uno)
+  (c) Pawelsky 20160919
   Not for commercial use
 */
 

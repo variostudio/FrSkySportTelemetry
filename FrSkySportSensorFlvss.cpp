@@ -1,6 +1,6 @@
 /*
-  FrSky FLVSS LiPo voltage sensor class for Teensy 3.x and 328P based boards (e.g. Pro Mini, Nano, Uno)
-  (c) Pawelsky 20151018
+  FrSky FLVSS/MLVSS LiPo voltage sensor class for Teensy 3.x/LC and 328P based boards (e.g. Pro Mini, Nano, Uno)
+  (c) Pawelsky 20160919
   Not for commercial use
 */
 
@@ -90,7 +90,7 @@ uint16_t FrSkySportSensorFlvss::decodeData(uint8_t id, uint16_t appId, uint32_t 
       uint8_t cellNum = data & 0x0F; data >>= 4;
       cell[firstCellNo]     = (data & 0x0FFF) / 500.0; data >>= 12;
       cell[firstCellNo + 1] = (data & 0x0FFF) / 500.0;
-      for(uint8_t i = 5; i >= cellNum; i--) cell[i] = 0.0;
+      for(uint8_t i = cellNum; i <= 5; i++) cell[i] = 0.0;
       return appId;
     }
   }

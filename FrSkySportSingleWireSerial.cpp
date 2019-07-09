@@ -1,6 +1,6 @@
 /*
-  FrSky single wire serial class for Teensy 3.x and 328P based boards (e.g. Pro Mini, Nano, Uno)
-  (c) Pawelsky 20151020
+  FrSky single wire serial class for Teensy 3.x/LC and 328P based boards (e.g. Pro Mini, Nano, Uno)
+  (c) Pawelsky 20180402
   Not for commercial use
 */
 
@@ -10,14 +10,15 @@ FrSkySportSingleWireSerial::FrSkySportSingleWireSerial()
 {
   uartC3 = NULL;
   port = NULL;
-#if !defined(__MK20DX128__) && !defined(__MK20DX256__)
+#if !defined(__MK20DX128__) && !defined(__MK20DX256__) && !defined(__MKL26Z64__) && !defined(__MK66FX1M0__) && !defined(__MK64FX512__)
   softSerial = NULL;
 #endif
 }
 
-void FrSkySportSingleWireSerial::begin(SerialId id, bool isDecoder)
+void FrSkySportSingleWireSerial::begin(SerialId id)
 {
-#if defined(__MK20DX128__) || defined(__MK20DX256__)
+#if defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MKL26Z64__) || defined(__MK66FX1M0__) || defined(__MK64FX512__)
+
   if(id == SERIAL_USB) // Not really single wire, but added for debug purposes via USB
   {
     port = &Serial;
@@ -28,11 +29,8 @@ void FrSkySportSingleWireSerial::begin(SerialId id, bool isDecoder)
     port = &Serial1;
     Serial1.begin(57600);
     uartC3 = &UART0_C3;
-    if(isDecoder == false)
-    {
-      UART0_C1 = 0xA0;  // Put Serial1 into single wire mode
-      UART0_C3 = 0x10;  // Invert Serial1 Tx levels
-    }
+    UART0_C1 = 0xA0;  // Put Serial1 into single wire mode
+    UART0_C3 = 0x10;  // Invert Serial1 Tx levels
     UART0_S2 = 0x10;  // Invert Serial1 Rx levels;
   }
   else if(id == SERIAL_2)
@@ -40,11 +38,8 @@ void FrSkySportSingleWireSerial::begin(SerialId id, bool isDecoder)
     port = &Serial2;
     Serial2.begin(57600);
     uartC3 = &UART1_C3;
-    if(isDecoder == false)
-    {
-      UART1_C1 = 0xA0;  // Put Serial2 into single wire mode
-      UART1_C3 = 0x10;  // Invert Serial2 Tx levels
-    }
+    UART1_C1 = 0xA0;  // Put Serial2 into single wire mode
+    UART1_C3 = 0x10;  // Invert Serial2 Tx levels
     UART1_S2 = 0x10;  // Invert Serial2 Rx levels;
   }
   else if(id == SERIAL_3)
@@ -52,13 +47,39 @@ void FrSkySportSingleWireSerial::begin(SerialId id, bool isDecoder)
     port = &Serial3;
     Serial3.begin(57600);
     uartC3 = &UART2_C3;
-    if(isDecoder == false)
-    {
-      UART2_C1 = 0xA0;  // Put Serial3 into single wire mode
-      UART2_C3 = 0x10;  // Invert Serial3 Tx levels
-    }
+    UART2_C1 = 0xA0;  // Put Serial3 into single wire mode
+    UART2_C3 = 0x10;  // Invert Serial3 Tx levels
     UART2_S2 = 0x10;  // Invert Serial3 Rx levels;
   }
+  #if defined(__MK66FX1M0__) || defined(__MK64FX512__)
+  else if(id == SERIAL_4)
+  {
+    port = &Serial4;
+    Serial4.begin(57600);
+    uartC3 = &UART3_C3;
+    UART3_C1 = 0xA0;  // Put Serial4 into single wire mode
+    UART3_C3 = 0x10;  // Invert Serial4 Tx levels
+    UART3_S2 = 0x10;  // Invert Serial4 Rx levels;
+  }
+  else if(id == SERIAL_5)
+  {
+    port = &Serial5;
+    Serial5.begin(57600);
+    uartC3 = &UART4_C3;
+    UART4_C1 = 0xA0;  // Put Serial5 into single wire mode
+    UART4_C3 = 0x10;  // Invert Serial5 Tx levels
+    UART4_S2 = 0x10;  // Invert Serial5 Rx levels;
+  }
+  else if(id == SERIAL_6)
+  {
+    port = &Serial6;
+    Serial6.begin(57600);
+    uartC3 = &UART5_C3;
+    UART5_C1 = 0xA0;  // Put Serial6 into single wire mode
+    UART5_C3 = 0x10;  // Invert Serial6 Tx levels
+    UART5_S2 = 0x10;  // Invert Serial6 Rx levels;
+  }
+  #endif
 #elif defined(__AVR_ATmega328P__) 
   if(softSerial != NULL)
   {
@@ -70,14 +91,14 @@ void FrSkySportSingleWireSerial::begin(SerialId id, bool isDecoder)
   port = softSerial;
   softSerial->begin(57600);
 #else
-  #error "Unsupported processor! Only Teesny 3.x and 328P based processors supported.";
+  #error "Unsupported processor! Only Teesny 3.x/LC and 328P based processors supported.";
 #endif
   crc = 0;
 }
 
 void FrSkySportSingleWireSerial::setMode(SerialMode mode)
 {
-#if defined(__MK20DX128__) || defined(__MK20DX256__)
+#if defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MKL26Z64__) || defined(__MK66FX1M0__) || defined(__MK64FX512__)
   if((port != NULL) && (uartC3 != NULL))
   {
     if(mode == TX)
@@ -102,6 +123,18 @@ void FrSkySportSingleWireSerial::setMode(SerialMode mode)
     }
   }
 #endif
+}
+
+void FrSkySportSingleWireSerial::sendHeader(uint8_t id)
+{
+  if(port != NULL)
+  {
+    setMode(TX);
+    port->write(FRSKY_TELEMETRY_START_FRAME);
+    port->write(id);
+    port->flush();
+    setMode(RX);
+  }
 }
 
 void FrSkySportSingleWireSerial::sendByte(uint8_t byte)
