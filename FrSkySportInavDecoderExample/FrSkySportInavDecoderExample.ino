@@ -1,6 +1,6 @@
 /*
-  FrSky S-Port Telemetry Decoder library example for the XJT decoder class (old hub telemetry and basic RSSI/ADC1/ADC2/RxBatt/SWR data)
-  (c) Pawelsky 20160919
+  FrSky S-Port Telemetry Decoder library example for the INAV decoder class (old hub telemetry and basic RSSI/ADC1/ADC2/RxBatt/SWR data)
+  (c) Dmytro Pashko
   Not for commercial use
   
   Note that you need Teensy 3.x/LC or 328P based (e.g. Pro Mini, Nano, Uno) board and FrSkySportDecoder library for this example to work
