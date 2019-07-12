@@ -77,9 +77,7 @@ void loop()
     Serial.print("ACCY = "); Serial.print(inav.getAccY());                      // Y axis acceleraton in Gs (can be negative)
     Serial.print("ACCZ = "); Serial.print(inav.getAccZ()); Serial.println("G"); // Z axis acceleraton in Gs (can be negative)
 
-    Serial.print("Heading = "); Serial.print(inav.getHeading());             
-    Serial.print("Roll = "); Serial.print(inav.getRoll());                   
-    Serial.print("Pitch = "); Serial.print(inav.getPitch()); Serial.println(""); 
+    Serial.print("Heading = "); Serial.print(inav.getHeading()); Serial.println(""); 
         
     Serial.print("MODE = "); Serial.println(inav.getFlightMode()); 
 

@@ -11,7 +11,7 @@
 
 #include "FrSkySportSensor.h"
 
-#define XJT_DEFAULT_ID ID25
+#define INAV_DEFAULT_ID                     ID28
 
 #define INAV_RSSI_DATA_ID                   0xF101
 #define INAV_RXBATT_DATA_ID                 0xF104
@@ -34,7 +34,7 @@
 class FrSkySportSensorInav : public FrSkySportSensor
 {
   public:
-    FrSkySportSensorInav(SensorId id = XJT_DEFAULT_ID);
+    FrSkySportSensorInav(SensorId id = INAV_DEFAULT_ID);
     virtual uint16_t decodeData(uint8_t id, uint16_t appId, uint32_t data);
 
     // System data
@@ -60,16 +60,14 @@ class FrSkySportSensorInav : public FrSkySportSensor
     float getAccZ();
     
     float getHeading();
-    float getPitch();
-    float getRoll();
         
-    uint8_t getFlightMode();
-    uint8_t getGpsState();
+    int16_t getFlightMode();
+    int32_t getGpsState();
     
   private:
     // Temporary variables for collecting telemetry values that are combined from multiple data IDs
-    uint8_t fMode;
-    uint8_t gpsState;
+    int16_t fMode;
+    int32_t gpsState;
     int32_t latLon;
     int32_t inavLon;
     int32_t inavLat;
@@ -91,8 +89,6 @@ class FrSkySportSensorInav : public FrSkySportSensor
     float accY;
     float accZ;
     float heading;
-    float pitch;
-    float roll;
 };
 
 #endif // _FRSKY_SPORT_SENSOR_INAV_H_

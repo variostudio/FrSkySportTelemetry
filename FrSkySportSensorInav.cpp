@@ -12,8 +12,8 @@ FrSkySportSensorInav::FrSkySportSensorInav(SensorId id) : FrSkySportSensor(id) {
 
 uint16_t FrSkySportSensorInav::decodeData(uint8_t id, uint16_t appId, uint32_t data)
 {
-  //if((sensorId == id) || (sensorId == FrSkySportSensor::ID_IGNORE))
-  //{
+  if((sensorId == id) || (sensorId == FrSkySportSensor::ID_IGNORE) || (ID25 == id))
+  {
     switch(appId)
     {
       case INAV_RSSI_DATA_ID:
@@ -32,7 +32,7 @@ uint16_t FrSkySportSensorInav::decodeData(uint8_t id, uint16_t appId, uint32_t d
         altitude = (int16_t)data;
         return appId;
       case INAV_VARIO_DATA_ID:
-        vario = data / 100.0;
+        vario = (int32_t)data / 100.0;
         return appId;
       case INAV_LON_LAT_DATA_ID:
         latLon = ((uint32_t)data);
@@ -43,8 +43,8 @@ uint16_t FrSkySportSensorInav::decodeData(uint8_t id, uint16_t appId, uint32_t d
 		}
         return appId;
       case INAV_GPS_STATE_DATA_ID:
-        gpsState = (uint8_t)data; 
-        break;        
+        gpsState = (int32_t)data; 
+        return appId;
       case INAV_ACC_X_DATA_ID:
         accX = ((int16_t)data) / 1000.0;  
         return appId;
@@ -55,28 +55,20 @@ uint16_t FrSkySportSensorInav::decodeData(uint8_t id, uint16_t appId, uint32_t d
         accZ = ((int16_t)data) / 1000.0;  
         return appId;
       case INAV_FLIGHT_MODE_DATA_ID:
-        fMode = (uint8_t)data;
+        fMode = (int16_t)data;
         return appId;
       case INAV_HEADING_DATA_ID:
-        heading = (uint32_t)data/100.0;
-        return appId;
-      case INAV_PITCH_DATA_ID:
-        pitch = (uint32_t)data/100.0;
-        return appId;
-      case INAV_ROLL_DATA_ID:
-        roll = (uint32_t)data/100.0;
+        heading = (int32_t)data / 100.0;
         return appId;
       case INAV_CAP_USED_DATA_ID:
-        capUsed = (uint32_t)data;
+        capUsed = (int32_t)data;
         return appId;
       case INAV_VOLTAGE_DATA_ID:
-        voltage = (uint32_t)data/100.0;
+        voltage = (int32_t)data / 100.0;
         return appId;
-        
-        
     }
-  //}
-  return appId;
+  }
+  return SENSOR_NO_DATA_ID;
 }
 
 uint8_t FrSkySportSensorInav::getRssi() { return rssi; }
@@ -93,8 +85,6 @@ float FrSkySportSensorInav::getAccX() { return accX; }
 float FrSkySportSensorInav::getAccY() { return accY; }
 float FrSkySportSensorInav::getAccZ() { return accZ; }
 float FrSkySportSensorInav::getHeading() { return heading; }
-float FrSkySportSensorInav::getPitch() { return pitch; }
-float FrSkySportSensorInav::getRoll() { return roll; }
 int32_t FrSkySportSensorInav::getCapacityUsed() { return capUsed; }
-uint8_t FrSkySportSensorInav::getFlightMode() { return fMode; }
-uint8_t FrSkySportSensorInav::getGpsState() { return gpsState; }
+int16_t FrSkySportSensorInav::getFlightMode() { return fMode; }
+int32_t FrSkySportSensorInav::getGpsState() { return gpsState; }
